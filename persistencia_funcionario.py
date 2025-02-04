@@ -1,6 +1,7 @@
 
 from funcionario import Funcionario
 
+
 def gravar_funcionarios(ficheiro, lista_funcionarios):
     with open(ficheiro, "w") as f:
         for funcionario in lista_funcionarios:
