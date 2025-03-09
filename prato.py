@@ -5,19 +5,20 @@ class Prato:
         self.descricao = descricao
         self.preco = preco
 
-    def __str__(self):
-        return f'{self.id},{self.nome},{self.descricao},{self.preco}'
-
-    @staticmethod
-    def from_string(data_str):
-        id, nome, descricao, preco = data_str.strip().split(",")
-        return Prato(int(id), nome, descricao, int(preco))
-
     def is_valid(self):
-        if self.preco < 0:
-            return False
-        if not self.nome:
-            return False
-        if len(self.nome) > 50:
+        erros = []
+        if not isinstance(self.id, int) or self.id <= 0:
+            erros.append("ID deve ser um número inteiro positivo")
+        if not self.nome or not isinstance(self.nome, str):
+            erros.append("Nome não pode ser vazio e deve ser uma string")
+        if not self.descricao or not isinstance(self.descricao, str):
+            erros.append("Descrição não pode ser vazio e deve ser uma string")
+        if not isinstance(self.preco, (int, float)) or self.preco <= 0:
+            erros.append("Preço não pode ser zero ou negativo")
+        if erros:
+            print("Erro(s) encontrado(s):")
+            for erro in erros:
+                print(f"- {erro}")
             return False
         return True
+
