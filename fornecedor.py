@@ -207,7 +207,7 @@ def remover_fornecedor(fornecedores, produtos, ficheiro):
         fornecedores.remove(fornecedor)
         gravar_fornecedor(ficheiro, fornecedores)
         print(f"Fornecedor '{nome_fornecedor}' removido com sucesso!")
-        return
+        
 
   
    
