@@ -185,9 +185,10 @@ def remover_produto(produtos, fornecedores, ficheiro):
     if confirmacao != 's':
         print("Operação cancelada.")
         return
-    produtos.remove(produto)
-    gravar_produto(ficheiro, produtos)
-    print(f"Produto '{nome_produto}' removido com sucesso!")
+    else:
+        produtos.remove(produto)
+        gravar_produto(ficheiro, produtos)
+        print(f"Produto '{nome_produto}' removido com sucesso!")
 
            
    
