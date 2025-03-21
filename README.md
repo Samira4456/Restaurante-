@@ -1,1 +1,1 @@
-restaurante do 12 T1
+restaurante 12ºT1
