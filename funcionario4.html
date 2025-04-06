@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Funcionários</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        th {
+            color: red;
+            text-align: center;
+        }
+        .delete-icon {
+            cursor: pointer;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-4">
+        <h1 class="text-center mb-4">Tabela de Funcionários</h1>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Idade</th>
+                        <th>Salário</th>
+                        <th>Cargo</th>
+                        <th>NIF</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="funcionario-table-body">
+                    {% for funcionario in funcionarios %}
+                    <tr data-funcionario-id="{{ funcionario.NIF }}">
+                        <td>{{ funcionario.nome }}</td>
+                        <td>{{ funcionario.idade }}</td>
+                        <td>{{ funcionario.salario }}</td>
+                        <td>{{ funcionario.cargo }}</td>
+                        <td>{{ funcionario.NIF }}</td>
+                        <td class="text-center">
+                            <i class="bi bi-trash delete-icon" onclick="removeFuncionario('{{ funcionario.NIF }}')"></i>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFuncionarioModal">
+                Adicionar Novo Funcionário
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addFuncionarioModal" tabindex="-1" aria-labelledby="addFuncionarioModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addFuncionarioModalLabel">Adicionar Novo Funcionário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-funcionario-form">
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="nome" name="nome" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idade" class="form-label">Idade</label>
+                            <input type="text" class="form-control" id="idade" name="idade" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="salario" class="form-label">Salário</label>
+                            <input type="number" class="form-control" id="salario" name="salario" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cargo" class="form-label">Cargo</label>
+                            <input type="text" class="form-control" id="cargo" name="cargo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="NIF" class="form-label">NIF</label>
+                            <input type="number" class="form-control" id="NIF" name="NIF" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">Submeter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('add-funcionario-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const nome = document.getElementById('nome').value;
+            const idade = document.getElementById('idade').value;
+            const salario = document.getElementById('salario').value;
+            const cargo = document.getElementById('cargo').value;
+            const NIF = document.getElementById('NIF').value;
+
+            fetch('/new_funcionario', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({nome, idade, salario, cargo, NIF }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.message) {
+                    const newRow = document.createElement('tr');
+                    newRow.setAttribute('data-funcionario-id', NIF);
+                    newRow.innerHTML = `
+                        <td>${nome}</td>
+                        <td>${idade}</td>
+                        <td>${salario}</td>
+                        <td>${cargo}</td>
+                        <td>${NIF}</td>
+                        <td class="text-center">
+                            <i class="bi bi-trash delete-icon" onclick="removeFuncionario('${NIF}')"></i>
+                        </td>
+                    `;
+                    document.getElementById('funcionario-table-body').appendChild(newRow);
+
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addFuncionarioModal'));
+                    modal.hide();
+                    document.getElementById('add-funcionario-form').reset();
+                } else {
+                    alert('Erro ao adicionar funcionário. Tente novamente.');
+                }
+            })
+            .catch(error => console.error('Erro:', error));
+        });
+
+        function removeFuncionario(NIF) {
+            if (confirm("Deseja mesmo remover este funcionário?")) {
+                fetch('/remove_funcionario', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ NIF })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        const row = document.querySelector(`tr[data-funcionario-id="${NIF}"]`);
+                        if (row) {
+                            row.remove();
+                        }
+                    } else {
+                        alert('Erro ao remover funcionário. Tente novamente.');
+                    }
+                })
+                .catch(error => console.error('Erro:', error));
+            }
+        }
+    </script>
+</body>
+</html>
