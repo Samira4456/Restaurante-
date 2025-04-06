@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Funcionários</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container my-4">
+        <h1 class="text-center mb-4">Tabela de Funcionários</h1>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>NIF</th>
+                        <th>Nome</th>
+                        <th>Idade</th>
+                        <th>Salário</th>
+                        <th>Cargo</th>
+                    </tr>
+                </thead>
+                <tbody id="funcionario-table-body">
+                    {% for funcionario in funcionarios %}
+                    <tr>
+                        <td>{{ funcionario.NIF}}</td>
+                        <td>{{ funcionario.nome }}</td>
+                        <td>{{ funcionario.idade }}</td>
+                        <td>{{ funcionario.salario }}</td>
+                        <td>{{ funcionario.cargo}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Botão para abrir o modal -->
+        <div class="text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addFuncionarioModal">
+                Adicionar Novo Funcionário
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal para adicionar novo funcionario -->
+    <div class="modal fade" id="addFuncionarioModal" tabindex="-1" aria-labelledby="addFuncionarioModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addFuncionarioModalLabel">Adicionar Novo Funcionário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-funcionario-form">
+                        <div class="mb-3">
+                            <label for="nif" class="form-label">NIF</label>
+                            <input type="text" class="form-control" id="nif" name="nif" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="nome" name="nome" required>
+                        </div>
+                        <div class = "mb-3">
+                            <label for="idade" class="form-label">Idade</label>
+                            <input type="text" class="form-control" id="idade" name="idade" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cargo" class="form-label">Cargo</label>
+                            <input type="text" class="form-control" id="cargo" name="cargo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="salario" class="form-label">Salário</label>
+                            <input type="text" class="form-control" id="salario" name="salario" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Submeter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Script para enviar dados do formulário e atualizar a tabela
+        document.getElementById('add-funcionario-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Previne o envio padrão do formulário
+
+            // Obter dados do formulário
+            const nif = document.getElementById('NIF').value;
+            const nome = document.getElementById('nome').value;
+            const idade = document.getElementById('idade').value;
+            const cargo = document.getElementById('cargo').value;
+            const salario = document.getElementById('salario').value;
+
+            // Enviar dados para o endpoint /new_funcionario usando fetch
+            const tableBody = document.getElementById('funcionario-table-body');
+
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${nif}</td>
+            <td>${nome}</td>
+            <td>${idade}</td>
+            <td>${salario}</td>
+            <td>${cargo}</td>
+        `;
+
+        tableBody.appendChild(newRow);
+
+
+            document.getElementById('add-funcionario-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const nif = document.getElementById('nif').value;
+    const nome = document.getElementById('nome').value;
+    const idade = document.getElementById('idade').value;
+    const cargo = document.getElementById('cargo').value;
+    const salario = document.getElementById('salario').value;
+
+    fetch('/new_funcionario3/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ NIF, nome, idade, cargo, salario }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            alert('Funcionário adicionado com sucesso!');
+
+            document.getElementById('funcionario-table-body').appendChild(newRow);
+
+            // Fechar o modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addFuncionarioModal'));
+            modal.hide();
+
+            // Limpar o formulário
+            document.getElementById('add-funcionario-form').reset();
+        } else {
+            alert('Erro ao adicionar funcionário: ' + (data.error || 'Tente novamente.'));
+        }
+    })
+    .catch(error => console.error('Erro:', error));
+});
+
+
+    </script>
+</body>
+</html>
