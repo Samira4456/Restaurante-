@@ -1,4 +1,6 @@
 import csv
+from flask import Flask, request, jsonify
+app = Flask(__name__)
 
 class Prato:
     def __init__(self, id, nome, descricao, preco):
@@ -48,5 +50,13 @@ class Ementa:
     def get_pratos(self):
         return self.pratos
 
-if __name__ == "__main__":
-    main()
+@app.route('/new_prato', methods=['POST'])
+def new_prato():
+    data = request.get_json()
+    nome = data.get('nome')
+    preco = data.get('preco')
+    descricao = data.get('descricao')
+    with open('pratos.csv', 'a') as arquivo:
+        arquivo.write(f"{nome},{preco},{descricao}\n")
+    return jsonify({'message': 'Prato adicionado com sucesso!'}), 201
+
