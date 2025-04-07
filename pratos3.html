@@ -1,0 +1,25 @@
+<!-- templates/pratos3.html -->
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Página de Pratos</title>
+</head>
+<body>
+    <h1>Lista de Pratos</h1>
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Nome</th>
+            <th>Preço</th>
+            <th>Descrição</th>
+        </tr>
+        {% for prato in pratos %}
+        <tr>
+            <td>{{ prato.nome }}</td>
+            <td>{{ prato.preco }}</td>
+            <td>{{ prato.descricao }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
