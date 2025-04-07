@@ -16,7 +16,6 @@ lista_funcionarios = []
 lista_fornecedores = []
 
 FICHEIRO_FORNECEDORES= "fornecedores.txt"
-FICHEIRO_PRODUTOS = "produtos.txt"
 FICHEIRO = "funcionários.txt"
 
 
@@ -83,6 +82,8 @@ def fornecedor():
     lista_fornecedores = carregar_fornecedores(FICHEIRO_FORNECEDORES)
     return render_template('Fornecedor4.html', fornecedores=lista_fornecedores)
 
+
+
 #FUNÇÕES HTML DO FORNECEDOR
 @app.route('/new_fornecedor', methods=['POST'])
 def new_fornecedor():
@@ -139,6 +140,10 @@ def index():
     lista_fornecedores = carregar_fornecedores(FICHEIRO_FORNECEDORES)
     return render_template('Fornecedor4.html', fornecedores=lista_fornecedores)
 
+
+
+
+#FUNÇÕES HTML PRATOS
 class Prato:
     def __init__(self, id, nome, descricao, preco):
         self.id = id
