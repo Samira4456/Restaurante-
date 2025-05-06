@@ -92,14 +92,13 @@
     <!-- JavaScript para adicionar/remover prato -->
     <script>
         function removePrato(idPrato) {
-            fetch('/remover_prato/' + idPrato, {
-                method: 'DELETE'
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                location.reload();
-            });
+           if (confirm("Deseja realmente remover este prato?")) {
+                fetch("/remover_prato/" + idPrato, {
+                    method: "DELETE"
+                })
+                .then(res => res.json())
+                .then(() => location.reload());
+            }
         }
 
         document.getElementById('add-prato-form').addEventListener('submit', function(event) {
