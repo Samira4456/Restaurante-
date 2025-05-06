@@ -1,14 +1,14 @@
 FICHEIRO = "funcionários.txt"
 class Funcionario:
-    def __init__(self,nome,idade,cargo,salario,NIF):
+    def __init__(self,nome,idade,salario , cargo, NIF):
         self.nome = nome
         self.idade = idade
+        self.salario= salario
         self.cargo = cargo
-        self.salario = salario
         self.NIF = NIF
 
     def __str__(self):
-        return f"{self.nome},{self.idade},{self.cargo},{self.salario}, {self.NIF}"
+        return f"{self.nome},{self.idade},{self.salario},{self.cargo}, {self.NIF}"
 
     def from_string(data_str):
         data = data_str.strip().split(",")
@@ -16,8 +16,8 @@ class Funcionario:
         if len(data) != 5:
             print(f"Erro: Dados incompletos ou mal formatados na linha: {data_str}")
             return None
-        nome, idade, cargo, salario, NIF = data
-        return Funcionario(nome, idade, cargo, salario, NIF)
+        nome, idade, salario, cargo, NIF = data
+        return Funcionario(nome, idade, salario, cargo, NIF)
 
 
 # Função para atualizar o funcionario
@@ -73,6 +73,7 @@ def atualizar_funcionarios (funcionario) :
     elif opcao == 6:
         print("Saindo...")
 
+
     else:
         print("Opção inválida!")
 
@@ -98,9 +99,9 @@ def menu_funcionario():
 
         if escolha == "1":
             print("\nPreencha as seguintes informações abaixo :")
-            nome = str(input("Nome Completo: "))
+            nome = str(input("Nome : "))
             while not validar_nome(nome) :
-                nome = str(input("Nome Completo: "))
+                nome = str(input("Nome : "))
             idade = input("Idade: ")
             while True :
                 try :
@@ -109,7 +110,9 @@ def menu_funcionario():
                 except ValueError :
                     print("A idade tem de apresentar um valor inteiro! Tente novamente.")
                     idade = input("Idade: ")
+            salario = input("Salário: ")
             cargo = input("Cargo: ")
+
             NIF = input("NIF: ")
             while True:
                 if len(NIF) != 9 or not NIF.isdigit():
@@ -117,12 +120,11 @@ def menu_funcionario():
                     NIF = input("NIF: ")
                 else:
                     break
-            salario = input("Salário: ")
 
 
-            funcionario=Funcionario(nome,idade,cargo,salario,NIF)
+            funcionario=Funcionario(nome,idade,salario,cargo,NIF)
             if validar_dados(nome, idade, NIF):
-                novo_funcionario = Funcionario(str(nome), int(idade), cargo, salario,NIF)
+                novo_funcionario = Funcionario(str(nome), int(idade), salario, cargo,NIF)
                 funcionarios.append(novo_funcionario)
                 gravar_funcionario(FICHEIRO, funcionarios)
                 print("\nFuncionário adicionado com sucesso!")
@@ -139,8 +141,8 @@ def menu_funcionario():
                     print("-" * 40)
                     print(f"Nome: {func.nome}")
                     print(f"Idade: {func.idade}")
-                    print(f"Cargo: {func.cargo}")
                     print(f"Salário: {func.salario}")
+                    print(f"Cargo: {func.cargo}")
                     print(f"NIF: {func.NIF}")
                     print("-" * 40)
 
@@ -179,7 +181,7 @@ def menu_funcionario():
                     opcao = int(input("\nEscolha o número do funcionário que deseja eliminar: "))
                     if 1 <= opcao <= len(funcionarios):
                         funcionario = funcionarios[opcao - 1]
-                        del funcionarios [opcao-1]
+                        funcionarios.clear()
                         print("Funcionário eliminado com sucesso!")
                     else:
                         print("Opção inválida. Escolha um número válido.")
@@ -187,8 +189,8 @@ def menu_funcionario():
                     print("Digite um número válido.")
         elif escolha == "6":
             print("Saindo do programa...")
-
             break
+
 
         else:
             print("Opção inválida. Tente novamente!")
@@ -220,27 +222,31 @@ def validar_novosdados (nova_idade, novo_NIF) :
     return True
 
 
-def add_funcionario(nome, idade, salario, NIF, cargo):
-    novo_funcionario = {"Nome": nome, "Idade": idade, "Salário": salario, "NIF": NIF, "Cargo": cargo}
+def add_funcionario(nome, idade, salario, cargo, NIF):
+    novo_funcionario = {"Nome": nome, "Idade": idade, "Salário": salario, "Cargo": cargo,  "NIF": NIF}
     Funcionario.append(novo_funcionario)
 
 
-def gravar_funcionario(ficheiro, lista_funcionarios):
-    with open(ficheiro, "w") as f:
+def gravar_funcionario(FICHEIRO, lista_funcionarios):
+    with open(FICHEIRO, "w") as f:
         for funcionario in lista_funcionarios:
             f.write(str(funcionario) + "\n")
-    print(f"Funcionários gravados em {ficheiro} com sucesso !")
+    print(f"Funcionários gravados em {FICHEIRO} com sucesso !")
 
-
-def carregar_funcionarios(ficheiro):
+def carregar_funcionarios(FICHEIRO):
     funcionarios = []
     try:
-        with open(ficheiro, "r") as f:
+        with open(FICHEIRO, "r") as f:
             for linha in f:
                 funcionario = Funcionario.from_string (linha)
                 funcionarios.append(funcionario)
-        print(f" Funcionários carregados com sucesso de {ficheiro} !")
+        print(f" Funcionários carregados com sucesso de {FICHEIRO} !")
     except FileNotFoundError:
-        print(f"O ficheiro {ficheiro} não foi encontrado ")
+        print(f"O ficheiro {FICHEIRO} não foi encontrado ")
     return funcionarios
 
+
+       
+
+                 
+   

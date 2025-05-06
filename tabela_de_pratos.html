@@ -1,0 +1,111 @@
+<!-- templates/tabela_de_pratos.html -->
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestão de Pratos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        th {
+            text-align: center;
+            color: #d63384;
+        }
+        .delete-icon {
+            color: red;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Lista de Pratos</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered align-middle">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Preço</th>
+                        <th>Descrição</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prato in pratos %}
+                    <tr>
+                        <td>{{ prato.id }}</td>
+                        <td>{{ prato.nome }}</td>
+                        <td>€ {{ prato.preco }}</td>
+                        <td>{{ prato.descricao }}</td>
+                        <td class="text-center">
+                            <i class="bi bi-trash delete-icon" onclick="removerPrato({{ prato.id }})"></i>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Botão para abrir modal -->
+        <div class="text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdicionar">Adicionar Prato</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalAdicionar" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="formAdicionar">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">Novo Prato</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="nome" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="preco" class="form-label">Preço</label>
+                            <input type="number" class="form-control" id="preco" step="0.01" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descricao" class="form-label">Descrição</label>
+                            <input type="text" class="form-control" id="descricao" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Adicionar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById("formAdicionar").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const nome = document.getElementById("nome").value;
+            const preco = document.getElementById("preco").value;
+            const descricao = document.getElementById("descricao").value;
+
+            fetch("/adicionar_novo_prato", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome, preco, descricao })
+            }).then(res => res.json()).then(() => location.reload());
+        });
+
+        function removerPrato(id) {
+            fetch(`/remover_prato/${id}`, {
+                method: "DELETE"
+            }).then(res => res.json()).then(() => location.reload());
+        }
+    </script>
+</body>
+</html>
